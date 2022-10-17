@@ -1,4 +1,5 @@
 #include "compiler.h"
+#include <pthread.h>
 
 using namespace luna;
 
@@ -6,6 +7,8 @@ luna::Variable cible;
 std::string Ligne_Affectation;
 int resultat;
 int nombre_courant;
+
+void* Execution(void* argv);
 
 Compiler::Compiler(std::string str) : content(str),pos_courante(0) {}
 
@@ -269,7 +272,11 @@ void Compiler::Program(std::string str)
             of.close();
 
             usleep(1000000);
-            execlp("g++","g++ -o",new_file.c_str(),sfile.c_str(),NULL);
+
+            pthread_t thread_exec;
+            pthread_create(&thread_exec,NULL,Execution,(void*)new_file.c_str());
+            pthread_join(thread_exec,NULL);
+
             remove(sfile.c_str());
 
             return;
@@ -277,4 +284,21 @@ void Compiler::Program(std::string str)
     }
     std::string error = "\033[91mCOMPILATION ERROR\033[0m: The caracter('"+SymboleCourant(1)+"') at "+ std::to_string(pos_courante+1) + " th";
     throw exception(error);
+}
+
+void* Execution(void* argv)
+{
+    std::string exe = (char*)argv;
+    std::string cpp = (char*)argv;cpp.append(".cpp");
+    
+    std::string st = "g++ -o " + exe + " " + cpp;
+
+    for (size_t i = 5; i > 0; i--)
+    {
+        std::cout << "Executable dans t= "<< i << "(sec)" << std::endl; 
+        usleep(1'000'000);
+    }    
+    std::system(st.c_str());
+
+    return 0;
 }
