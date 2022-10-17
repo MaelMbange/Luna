@@ -1,6 +1,5 @@
 .SILENT:
 
-macro = ./include/lmacro.h
 INC = ./include/
 
 DEP = $(INC)exception.o $(INC)file.o 
