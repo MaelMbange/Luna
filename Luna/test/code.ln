@@ -1,0 +1,13 @@
+start 
+
+a = 10 + 5;
+b = 20 - 2;
+
+a = a + a / 2;
+c;
+
+ab = a + b;
+
+print ab;
+
+stop
